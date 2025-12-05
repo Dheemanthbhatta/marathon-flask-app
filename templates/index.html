@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marathon Event Management System</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header h1 { color: #667eea; font-size: 2.5em; margin-bottom: 10px; }
+        .header p { color: #666; font-size: 1.1em; }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            height: fit-content;
+        }
+
+        .sidebar h2 { color: #667eea; margin-bottom: 20px; font-size: 1.5em; }
+
+        .query-selector select {
+            width: 100%; padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%; padding: 12px;
+            margin-bottom: 10px;
+            border: none; border-radius: 8px; cursor: pointer;
+            font-size: 16px; font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        #results {
+            background: #f8f9fa; padding: 20px;
+            border-radius: 8px; border: 1px solid #e0e0e0;
+            max-height: 600px; overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px; line-height: 1.6;
+        }
+
+        .success-message, .error-message {
+            margin-top: 10px; padding: 10px;
+            border-radius: 6px; display: none;
+        }
+
+        .success-message { background: #d4edda; color: #155724; }
+        .error-message { background: #f8d7da; color: #721c24; }
+
+        .query-description {
+            background: #f0f7ff; padding: 12px;
+            border-radius: 8px; margin: 12px 0;
+            font-size: 14px; color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏃 Marathon Event Management System</h1>
+            <p>MongoDB + Python Flask | Execute Queries and Manage Runners</p>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <h2>Query Execution</h2>
+
+                <!-- Query Selector -->
+                <div class="query-selector">
+                    <select id="querySelect" onchange="updateDescription()">
+                        <option value="">-- Select Query --</option>
+
+                        <option value="1">1. Full Marathon finishers</option>
+                        <option value="2">2. Fastest runner per category</option>
+                        <option value="3">3. Runners who didn't finish</option>
+                        <option value="4">4. Average completion time</option>
+                        <option value="5">5. Medal + Certificate winners</option>
+                        <option value="6">6. Sponsors supporting multiple categories</option>
+                        <option value="7">7. Multi-category runners</option>
+                        <option value="8">8. Top 3 Half Marathon finishers</option>
+                        <option value="9">9. Popular refreshment stalls</option>
+                        <option value="10">10. Categories with 200+ participants</option>
+                        <option value="11">11. Above-average performers</option>
+                        <option value="12">12. Cities ranked by participation</option>
+                    </select>
+                </div>
+
+                <div id="queryDescription" class="query-description" style="display:none;"></div>
+
+                <button class="btn btn-primary" onclick="executeQuery()">🚀 Execute Query</button>
+                <button class="btn btn-secondary" onclick="viewAllRunners()">📋 View All Runners</button>
+
+                <!-- Insert Runner -->
+                <h3 style="margin-top:25px;">Insert Runner</h3>
+                <input type="text" id="insertBib" class="input" placeholder="Bib Number"><br>
+                <input type="text" id="insertName" class="input" placeholder="Name"><br>
+                <select id="insertCategory" class="input">
+                    <option value="Full Marathon">Full Marathon</option>
+                    <option value="Half Marathon">Half Marathon</option>
+                    <option value="10K">10K</option>
+                    <option value="5K">5K</option>
+                </select><br>
+                <input type="text" id="insertCity" class="input" placeholder="City"><br>
+
+                <button class="btn btn-primary" onclick="insertRunner()">➕ Insert Runner</button>
+                <div id="insertMessage" class="success-message"></div>
+
+                <!-- Delete Runner -->
+                <h3 style="margin-top:25px;">Delete Runner</h3>
+                <input type="text" id="deleteBib" class="input" placeholder="Bib Number"><br>
+                <button class="btn btn-primary" onclick="deleteRunner()">🗑 Delete Runner</button>
+                <div id="deleteMessage" class="success-message"></div>
+            </div>
+
+            <div class="results-section">
+                <h2>Query Results</h2>
+                <div id="resultCount" class="result-count" style="display:none;"></div>
+                <div id="results">
+                    <p style="color:#999; text-align:center;">Select a query to execute…</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const queryDescriptions = {
+            "1": "Lists all runners who completed the Full Marathon.",
+            "2": "Finds the fastest runner in each category.",
+            "3": "Shows runners who did not finish their race.",
+            "4": "Calculates average completion time per category.",
+            "5": "Shows runners who received both medal and certificate.",
+            "6": "Shows sponsors who support multiple categories.",
+            "7": "Runners who participated in more than one category.",
+            "8": "Top 3 fastest Half Marathon finishers.",
+            "9": "Refreshment stalls visited by 50+ runners.",
+            "10": "Categories with 200+ participants.",
+            "11": "Runners faster than average time of their category.",
+            "12": "Cities ranked by participation count."
+        };
+
+        function updateDescription() {
+            const value = document.getElementById("querySelect").value;
+            const desc = document.getElementById("queryDescription");
+
+            if (value) {
+                desc.textContent = queryDescriptions[value];
+                desc.style.display = "block";
+            } else {
+                desc.style.display = "none";
+            }
+        }
+
+        async function executeQuery() {
+            const queryNum = document.getElementById("querySelect").value;
+            if (!queryNum) return alert("Please select a query.");
+
+            document.getElementById("results").innerHTML = "<p>Loading...</p>";
+
+            const res = await fetch(`/query/${queryNum}`);
+            const data = await res.json();
+
+            document.getElementById("results").innerHTML =
+                `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        async function viewAllRunners() {
+            document.getElementById("results").innerHTML = "<p>Loading...</p>";
+
+            const res = await fetch("/all_runners");
+            const data = await res.json();
+
+            document.getElementById("results").innerHTML =
+                `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        async function insertRunner() {
+            const runner = {
+                bib_number: document.getElementById("insertBib").value,
+                name: document.getElementById("insertName").value,
+                category: document.getElementById("insertCategory").value,
+                city: document.getElementById("insertCity").value
+            };
+
+            const res = await fetch("/insert_runner", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(runner)
+            });
+
+            const data = await res.json();
+
+            const msg = document.getElementById("insertMessage");
+            msg.style.display = "block";
+            msg.textContent = "Runner inserted successfully!";
+        }
+
+        async function deleteRunner() {
+            const bib = document.getElementById("deleteBib").value;
+
+            const res = await fetch("/delete_runner", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ bib_number: bib })
+            });
+
+            const data = await res.json();
+
+            const msg = document.getElementById("deleteMessage");
+            msg.style.display = "block";
+            msg.textContent = "Runner deleted successfully!";
+        }
+    </script>
+
+</body>
+</html>
