@@ -1,4 +1,12 @@
 # 🏃‍♂️ Marathon Flask App
+<p align="left">
+  <img src="https://img.shields.io/badge/Python-3.10-blue" />
+  <img src="https://img.shields.io/badge/Flask-2.0-green" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow" />
+  <img src="https://img.shields.io/github/stars/Dheemanthbhatta/marathon-flask-app?style=social" />
+  <img src="https://img.shields.io/github/forks/Dheemanthbhatta/marathon-flask-app?style=social" />
+</p>
+
 
 A lightweight and efficient Flask-based web application designed to manage marathon event data, including participant registration, tracking, and basic analytics. Built with clean architecture and modular Python code, this project is ideal for learning backend development, database operations, and full‑stack integration.
 
