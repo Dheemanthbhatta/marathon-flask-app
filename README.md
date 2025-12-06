@@ -58,4 +58,4 @@ cd marathon-flask-app
 ![Form](screenshot-form.png)
 
 ### 📊 Dashboard View
-![Dashboard](screenshot-dashboard.png)
+![Dashboard](screenshot.dashboard.png)
