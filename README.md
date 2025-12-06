@@ -47,3 +47,15 @@ marathon-flask-app/ │── app.py │── queries.py │── requirements
 ```bash
 git clone https://github.com/Dheemanthbhatta/marathon-flask-app.git
 cd marathon-flask-app
+
+
+## 🖼️ Screenshots
+
+### 🏠 Homepage
+![Homepage](screenshot-home.png)
+
+### 📝 Registration Form
+![Form](screenshot-form.png)
+
+### 📊 Dashboard View
+![Dashboard](screenshot-dashboard.png)
